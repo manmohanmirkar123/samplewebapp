@@ -11,9 +11,9 @@ resources:
 variables:
 
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '863a36f4-a00f-4aa7-aef9-b9a2777acdfb'
+  dockerRegistryServiceConnection: '94a334ae-f080-424b-a5af-b81c8162bb0a'
   imageRepository: 'samplewebapp'
-  containerRegistry: 'devopsmelacr.azurecr.io'
+  containerRegistry: 'mann1106.azurecr.io'
   dockerfilePath: '**/Dockerfile'
   tag: '$(Build.BuildId)'
   imagePullSecret: 'devopsmelacr132827a7-auth'
@@ -62,7 +62,7 @@ stages:
     displayName: Deploy
     pool:
       vmImage: $(vmImageName)
-    environment: 'samplewebapp-2040.default'
+    environment: 'samplewebapp-2040'
     strategy:
       runOnce:
         deploy:
@@ -70,6 +70,7 @@ stages:
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
+              kubernetesServiceConnection: 274e7fe2-a6c8-4a83-8496-c488b4a82046
               action: createSecret
               secretName: $(imagePullSecret)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
@@ -77,6 +78,7 @@ stages:
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
+              kubernetesServiceConnection: 274e7fe2-a6c8-4a83-8496-c488b4a82046
               action: deploy
               manifests: |
                 $(Pipeline.Workspace)/manifests/deployment.yml
